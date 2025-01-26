@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <style>
+        @font-face {
+            font-family: 'T2HalvarBreitExtraBold';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'T2RooftopRegular';
+            src: url('fonts/T2_Rooftop-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'T2RooftopRegular', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-text {
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 0;
+            margin-top: 4px;
+        }
+
+        .logo-subtext {
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 2px 0 0;
+        }
+
+        .profiles-container {
+            height: calc(100vh - 150px);
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+
+        .container {
+            max-width: 260px;
+            margin: 15px auto;
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .container:active {
+            transform: scale(0.95);
+        }
+
+        img {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .details {
+            text-align: left;
+            margin-top: -5px;
+            font-family: 'T2RooftopRegular', sans-serif;
+        }
+
+        .name {
+            font-size: 22px;
+            margin-top: -10px;
+        }
+
+        .username {
+            color: #ff1493;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            right: 15px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .icon.color-pink-special {
+            filter: sepia(100%) saturate(500%) hue-rotate(290deg) brightness(100%) contrast(100%);
+        }
+
+        .slider {
+            width: 8px;
+            background-color: rgba(0, 0, 0, 0.1);
+            height: 300px;
+            border-radius: 50px;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ff1493;
+            border-radius: 4px;
+            transition: transform 0.1s ease-out;
+            cursor: pointer;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 20, 147, 0.7);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff007f;
+        }
+
+        .no-matches {
+            text-align: center;
+            color: #ff1493;
+            font-size: 16px;
+            margin: 30px auto;
+            font-family: 'T2RooftopRegular', sans-serif;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            font-family: 'T2RooftopRegular', sans-serif;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="logo-container">
+        <div class="logo-image">
+            <img src="logo/image.jpg" alt="Логотип">
+        </div>
+        <div class="logo-text-wrapper">
+            <p class="logo-text">БОЛЬШЕ,</p>
+            <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+        </div>
+    </div>
+
+    <div class="profiles-container" id="profiles"></div>
+    <div class="no-matches" id="noMatches" style="display: none;">У вас пока нет мэтчей.</div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalName"></h2>
+            <p id="modalAbout"></p>
+            <p id="modalDetails"></p>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <img src="photo/profblack.svg" class="icon" alt="Icon 1">
+        <img src="photo/messageblack.svg" class="icon" alt="Icon 2">
+        <img src="photo/message.pngblack.svg" class="icon" alt="Icon 3">
+        <div class="slider">
+            <div class="scroll-indicator" id="scrollIndicator"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profilesContainer = document.getElementById('profiles');
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            const noMatchesMessage = document.getElementById('noMatches');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentUserId = urlParams.get('user_id');
+            const currentUsername = urlParams.get('username');
+            const currentName = urlParams.get('name');
+            const currentAbout = urlParams.get('about');
+            const currentGender = urlParams.get('gender');
+            const currentBirthdate = urlParams.get('birthdate');
+
+            const userModal = document.getElementById('userModal');
+            const modalName = document.getElementById('modalName');
+            const modalAbout = document.getElementById('modalAbout');
+            const modalDetails = document.getElementById('modalDetails');
+
+            // Обработчик для первой иконки
+            document.querySelectorAll('.icon')[0].onclick = () => {
+                const newUrl = `profil.html?files=${encodeURIComponent(currentUsername)}%2Fphoto.jpg`
+                    + `&name=${encodeURIComponent(currentName)}`
+                    + `&username=${encodeURIComponent(currentUsername)}`
+                    + `&about=${encodeURIComponent(currentAbout)}`
+                    + `&gender=${encodeURIComponent(currentGender)}`
+                    + `&birthdate=${encodeURIComponent(currentBirthdate)}`
+                    + `&user_id=${currentUserId}`;
+                window.location.href = newUrl;
+            };
+
+            // Обработчик для иконки колокольчика
+            document.querySelectorAll('.icon')[1].onclick = () => {
+                updateMatches(currentUserId);
+                const newUrl = `bell.html?user_id=${currentUserId}&username=${encodeURIComponent(currentUsername)}&name=${encodeURIComponent(currentName)}&about=${encodeURIComponent(currentAbout)}&gender=${encodeURIComponent(currentGender)}&birthdate=${currentBirthdate}`;
+                window.location.href = newUrl;
+            };
+
+            Promise.all([
+                fetch('basa.json').then(response => response.json()),
+                fetch('matches.json').then(response => response.json())
+            ])
+            .then(([userData, matches]) => {
+                const currentDate = new Date();
+                const displayedUserIds = new Set();
+                let matchFound = false;
+
+                const calculateAge = (birthdate) => {
+                    const birthDate = new Date(birthdate);
+                    let age = currentDate.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    return age;
+                };
+
+                for (const key in matches) {
+                    const match = matches[key];
+                    const otherUserId = match.owner_user_id === currentUserId ? match.current_user_id : match.owner_user_id;
+
+                    if ((match.current_user_id === currentUserId || match.owner_user_id === currentUserId) && match.status === "взаимно") {
+                        if (displayedUserIds.has(otherUserId)) {
+                            continue;
+                        }
+
+                        displayedUserIds.add(otherUserId);
+                        matchFound = true;
+
+                        const user = userData[otherUserId];
+                        const profileDiv = document.createElement('div');
+                        profileDiv.className = 'container';
+                        profileDiv.dataset.userId = otherUserId;
+
+                        const queryParams = new URLSearchParams({
+                            current_user_id: currentUserId,
+                            owner_user_id: otherUserId,
+                            username: encodeURIComponent(user.username),
+                            name: encodeURIComponent(user.name),
+                            about: encodeURIComponent(user.about || ''),
+                            gender: encodeURIComponent(user.gender || ''),
+                            birthdate: encodeURIComponent(user.birthdate),
+                            images: user.files ? encodeURIComponent(user.files.join(',')) : ''
+                        }).toString();
+
+                        profileDiv.innerHTML = `
+                            <img src="${user.files ? user.files[0] : 'image/default-profile.jpg'}" alt="${user.name}">
+                            <div class="details">
+                                <div class="name">${user.name}, ${calculateAge(user.birthdate)}</div>
+                                <div class="username">@${user.username}</div>
+                            </div>
+                        `;
+
+                        profileDiv.onclick = () => {
+                            const newUrl = `catock.html?${queryParams}`;
+                            window.location.href = newUrl;
+                        };
+
+                        profileDiv.querySelector('.username').onclick = (event) => {
+                            event.stopPropagation();
+                            showUserDetails(user);
+                        };
+
+                        profilesContainer.appendChild(profileDiv);
+                    }
+                }
+
+                if (!matchFound) {
+                    noMatchesMessage.style.display = 'block';
+                } else {
+                    noMatchesMessage.style.display = 'none';
+                }
+
+                updateScrollIndicator();
+            })
+            .catch(error => console.error('Error loading JSON:', error));
+
+            const updateScrollIndicator = () => {
+                const visibleRatio = profilesContainer.clientHeight / profilesContainer.scrollHeight;
+                scrollIndicator.style.height = `${visibleRatio * 100}%`;
+            };
+
+            profilesContainer.addEventListener('scroll', () => {
+                const scrollHeight = profilesContainer.scrollHeight - profilesContainer.clientHeight;
+                const scrollTop = profilesContainer.scrollTop;
+                const scrollRatio = scrollTop / scrollHeight;
+                scrollIndicator.style.transform = `translateY(${scrollRatio * (300 - scrollIndicator.clientHeight)}px)`;
+            });
+
+            let isDragging = false;
+
+            scrollIndicator.addEventListener('mousedown', () => {
+                isDragging = true;
+                document.body.style.pointerEvents = "none";
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                document.body.style.pointerEvents = "auto";
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = profilesContainer.getBoundingClientRect();
+                    const maxScrollTop = profilesContainer.scrollHeight - profilesContainer.clientHeight;
+                    const sliderHeight = 300 - scrollIndicator.clientHeight;
+                    const newScrollTop = Math.min(maxScrollTop, Math.max(0, (e.clientY - rect.top) * maxScrollTop / sliderHeight));
+                    profilesContainer.scrollTop = newScrollTop;
+                }
+            });
+
+            window.addEventListener('resize', updateScrollIndicator);
+        });
+
+        function showUserDetails(user) {
+            const userModal = document.getElementById('userModal');
+            const modalName = document.getElementById('modalName');
+            const modalAbout = document.getElementById('modalAbout');
+            const modalDetails = document.getElementById('modalDetails');
+
+            const calculateAge = (birthdate) => {
+                const currentDate = new Date();
+                const birthDate = new Date(birthdate);
+                let age = currentDate.getFullYear() - birthDate.getFullYear();
+                const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            };
+
+            modalName.textContent = user.name;
+            modalAbout.textContent = user.about || 'Описание отсутствует';
+            modalDetails.textContent = `Пол: ${user.gender || 'не указан'}, Возраст: ${user.birthdate ? calculateAge(user.birthdate) : 'не указан'}`;
+
+            userModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const userModal = document.getElementById('userModal');
+            userModal.style.display = 'none';
+        }
+
+        function updateMatches(currentUserId) {
+            return fetch('process-likes.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentUserId: currentUserId, action: 'update_matches' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Matches updated:', data);
+                updateMatchesUI(data.matches);
+            })
+            .catch(error => console.error('Ошибка при обновлении matches.json:', error));
+        }
+    </script>
+
+</body>
+</html>

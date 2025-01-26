@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Твои планы</title>
+    <style>
+        @font-face {
+            font-family: 'HalvarBreit';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'HalvarBreit', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .container {
+            width: 320px;
+            text-align: left;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: calc(100vh - 40px);
+        }
+
+        .logo-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text, .logo-subtext {
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+            text-align: left;
+        }
+
+        .bar {
+            display: flex;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .bar .gray {
+            background-color: #cccccc;
+            flex: 1;
+            border-radius: 5px;
+            height: 6px;
+            margin: 0 1px;
+        }
+
+        .bar .pink {
+            background-color: #FF3495;
+            flex: 1;
+            border-radius: 5px;
+            height: 6px;
+            margin: 0 1px;
+        }
+
+        .card {
+            background-color: #A7FC00; /* Зеленый цвет обводки */
+            border-radius: 10px;
+            padding: 40px;
+            margin: 3px 0;
+            font-weight: bold;
+            color: black;
+            text-align: center;
+            font-size: 18px;
+            height: 160px; /* Увеличенная высота кнопки */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-transform: uppercase; /* Текст капсом */
+            line-height: 1.5; /* Межстрочное расстояние */
+        }
+
+        .card.pink {
+            background-color: #FF3495; /* Розовый цвет для второй кнопки */
+            color: white;
+        }
+
+        h1 {
+            font-family: 'HalvarBreit', Arial, sans-serif;
+            font-size: 26px;
+            margin: 0;
+            line-height: 1.2;
+            font-weight: bold;
+            text-transform: uppercase; /* Текст капсом для заголовков */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-top">
+            <div class="logo-image">
+                <img src="logo/image.jpg" alt="Логотип">
+            </div>
+            <div>
+                <p class="logo-text">БОЛЬШЕ,</p>
+                <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+            </div>
+        </div>
+        <div class="bar">
+            <div class="gray"></div>
+            <div class="gray"></div>
+            <div class="pink"></div>
+        </div>
+        <h1>ТВОИ</h1>
+        <h1>ПЛАНЫ?</h1>
+        <div class="card" onclick="selectActivity('ИЩУ С КЕМ СХОДИТЬ НА КАТОК')">ИЩУ С КЕМ СХОДИТЬ НА КАТОК</div>
+        <div class="card pink" onclick="selectActivity('Я УЖЕ НА КАТКЕ')">Я УЖЕ НА КАТКЕ</div>
+    </div>
+
+    <script>
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return Object.fromEntries(params.entries());
+        }
+
+        async function selectActivity(activity) {
+            const params = getQueryParams();
+            const userId = params.user_id;
+
+            try {
+                const response = await fetch(`getUserData.php?user_id=${userId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const userData = await response.json();
+                const queryString = new URLSearchParams({
+                    user_id: userData.user_id,
+                    username: userData.username,
+                    name: userData.name,
+                    about: userData.about,
+                    gender: userData.gender,
+                    birthdate: userData.birthdate
+                }).toString();
+
+                // Переход на выбранный URL с добавлением информации о активности
+                window.location.href = `https://123-231-21312-3213123-231.ru/match.html?${queryString}&activity=${encodeURIComponent(activity)}`;
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+            }
+        }
+    </script>
+</body>
+</html>

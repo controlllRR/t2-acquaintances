@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница матчей</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: 'HalvarBold';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'RooftopRegular';
+            src: url('fonts/T2_Rooftop-Regular.otf') format('opentype');
+        }
+
+        body {
+            font-family: 'RooftopRegular', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            color: #000;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            color: #555;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 60px;
+            margin-bottom: 10px;
+        }
+
+        .logo-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-text, .logo-subtext {
+            font-family: 'HalvarBold', sans-serif;
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+
+        .photo-container {
+            position: relative;
+            width: 90%;
+            max-width: 450px;
+            height: 500px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+            transition: transform 0.2s ease-in-out;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .user-photo {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: -5px;
+            left: 20px;
+            right: 10px;
+            height: 35%;
+            background: #000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+
+        .user-name-age {
+            font-family: 'HalvarBold', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .user-description {
+            font-size: 16px;
+            margin-top: 5px;
+            color: white;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            position: absolute;
+            bottom: 2px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out;
+            color: white;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .reject {
+            background-color: #ff1493;
+            left: -55px;
+        }
+
+        .like {
+            background-color: #00bfff;
+            left: 45px;
+        }
+
+        .center-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 70px;
+            height: 70px;
+            background: transparent;
+            box-shadow: none;
+            padding: 5px;
+            position: relative;
+        }
+
+        .center-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        .action-btn img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+
+        #matchStatus {
+            margin-top: 10px;
+            font-size: 18px;
+            color: green;
+            display: none;
+            text-align: center;
+        }
+
+        .photo-container.reject-animation {
+            animation: rejectMove 0.5s forwards;
+        }
+
+        .photo-container.like-animation {
+            animation: likeMove 0.5s forwards;
+        }
+
+        @keyframes rejectMove {
+            to { transform: translateX(-100%); opacity: 0; }
+        }
+
+        @keyframes likeMove {
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        .progress-bar-container {
+            width: 85%;
+            max-width: 450px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            display: none;
+            width: 100%;
+            display: flex;
+        }
+
+        .progress-bar .gray,
+        .progress-bar .pink {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            margin: 0 1px;
+        }
+
+        .gray {
+            background-color: #cccccc;
+        }
+
+        .pink {
+            background-color: #FF00FF;
+        }
+
+        #endMessage {
+            display: none;
+            font-size: 22px;
+            color: #ff1493;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">Назад</button>
+
+    <div class="logo-container">
+        <div class="logo-image">
+            <img src="logo/image.jpg" alt="Логотип">
+        </div>
+        <div class="logo-text-wrapper">
+            <p class="logo-text">БОЛЬШЕ,</p>
+            <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+        </div>
+    </div>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="photoContainer" class="photo-container">
+        <img id="userPhoto" class="user-photo" src="photo_user/photo_placeholder.png" alt="Фото пользователя">
+        <div class="overlay">
+            <div class="user-info">
+                <h2 id="userInfo" class="user-name-age">ИМЯ, ВОЗРАСТ</h2>
+            </div>
+            <p id="userDescription" class="user-description">Описание</p>
+        </div>
+        <div class="button-container">
+            <button class="action-btn reject" onclick="handleSwipe('left')">
+                <img src="photo/krest.svg" alt="Нет">
+            </button>
+            <div class="center-logo">
+                <img src="logo/image.jpg" alt="Логотип в центре">
+            </div>
+            <button class="action-btn like" onclick="handleSwipe('right')">
+                <img src="photo/love.svg" alt="Да">
+            </button>
+        </div>
+    </div>
+
+    <div id="matchStatus">Статус матча</div>
+    <div id="endMessage">Поздравляю, ты всех оценил! Нажми "Назад" для выхода.</div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        let users = [];
+        let currentIndex = 0;
+        let viewedUserIds = new Set();
+
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                currentUserId: urlParams.get('user_id')
+            };
+        }
+
+        const { currentUserId } = getQueryParams();
+
+        function goBack() {
+            if (!currentUserId) {
+                console.error('Не удалось получить user_id из URL');
+                return;
+            }
+
+            fetch('basa.json')
+                .then(response => response.json())
+                .then(data => {
+                    const currentUser = data[currentUserId];
+
+                    if (!currentUser) {
+                        console.error('Пользователь не найден в базе данных');
+                        return;
+                    }
+
+                    const queryString = new URLSearchParams({
+                        user_id: currentUser.user_id || null,
+                        username: currentUser.username || null,
+                        name: currentUser.name || null,
+                        about: currentUser.about || null,
+                        gender: currentUser.gender || null,
+                        birthdate: currentUser.birthdate || null
+                    }).toString();
+
+                    window.location.href = `https://123-231-21312-3213123-231.ru/bell.html?${queryString}`;
+                })
+                .catch(error => console.error('Ошибка при получении данных пользователя:', error));
+        }
+
+        function loadUsers() {
+            fetch('basa.json')
+                .then(response => response.json())
+                .then(data => {
+                    const currentUser = data[currentUserId];
+                    const currentGender = currentUser ? currentUser.gender : null;
+
+                    if (!currentGender) {
+                        console.error('Пол текущего пользователя не указан или некорректен.');
+                        return;
+                    }
+
+                    const targetGender = currentGender === 'Мужчина' ? 'Женщина' : 'Мужчина';
+
+                    users = Object.values(data).filter(user => {
+                        const userAge = calculateAge(user.birthdate);
+                        return user.user_id !== currentUserId &&
+                            user.gender &&
+                            user.gender === targetGender &&
+                            userAge >= 0;
+                    });
+
+                    shuffleArray(users);
+
+                    currentIndex = Math.floor(Math.random() * users.length);
+                    showUser(currentIndex);
+                })
+                .catch(error => console.error('Ошибка загрузки данных:', error));
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showUser(index) {
+            if (viewedUserIds.size >= users.length) {
+                document.getElementById('photoContainer').style.display = 'none';
+                document.getElementById('endMessage').style.display = 'block';
+                return;
+            }
+
+            const user = users[index];
+            if (viewedUserIds.has(user.user_id)) {
+                currentIndex = (index + 1) % users.length;
+                showUser(currentIndex);
+                return;
+            }
+
+            viewedUserIds.add(user.user_id);
+
+            const photos = user.files || ['photo_user/photo_placeholder.png'];
+            const photoElement = document.getElementById('userPhoto');
+            photoElement.src = photos[0];
+
+            const infoElement = document.getElementById('userInfo');
+            const descriptionElement = document.getElementById('userDescription');
+
+            const name = user.name.toUpperCase() || 'ИМЯ НЕ УКАЗАНО';
+            const age = calculateAge(user.birthdate);
+            const ageText = age !== null ? age : '';
+
+            infoElement.innerText = `${name}${ageText ? ", " + ageText : ''}`;
+            descriptionElement.innerText = user.about || 'БЕЗ ОПИСАНИЯ';
+        }
+
+        function calculateAge(birthdate) {
+            if (!birthdate) return null;
+            const birthDate = new Date(birthdate);
+            const currentDate = new Date();
+            if (birthDate > currentDate) return '';
+            const ageDiffMs = currentDate - birthDate.getTime();
+            const ageDate = new Date(ageDiffMs);
+            return Math.abs(ageDate.getUTCFullYear() - 1970);
+        }
+
+        function handleSwipe(direction) {
+            const photoContainer = document.getElementById('photoContainer');
+            photoContainer.classList.add(direction === 'left' ? 'reject-animation' : 'like-animation');
+
+            if (direction === 'right') {
+                saveLike(currentUserId, users[currentIndex].user_id);
+            }
+
+            setTimeout(() => {
+                photoContainer.classList.remove('reject-animation', 'like-animation');
+                
+                currentIndex = (currentIndex + 1) % users.length;
+                showUser(currentIndex);
+            }, 500);
+        }
+
+        function saveLike(currentUserId, ownerUserId) {
+            fetch('save-like.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentUserId, ownerUserId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.match) {
+                    showMatchStatus('Новый матч найден!');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при сохранении лайка:', error);
+            });
+        }
+
+        function showMatchStatus(message) {
+            const matchStatusDiv = document.getElementById('matchStatus');
+            matchStatusDiv.innerText = message;
+            matchStatusDiv.style.display = 'block';
+            setTimeout(() => {
+                matchStatusDiv.style.display = 'none';
+            }, 2000);
+        }
+
+        document.getElementById('photoContainer').addEventListener('touchstart', handleTouchStart, false);
+        document.getElementById('photoContainer').addEventListener('touchmove', handleTouchMove, false);
+
+        let startX;
+        function handleTouchStart(evt) {
+            const firstTouch = evt.touches ? evt.touches[0] : evt;
+            startX = firstTouch.clientX;
+        }
+
+        function handleTouchMove(evt) {
+            if (!startX) return;
+            let xDiff = (evt.touches ? evt.touches[0] : evt).clientX - startX;
+            if (xDiff > 50) handleSwipe('right');
+            else if (xDiff < -50) handleSwipe('left');
+            startX = null;
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>

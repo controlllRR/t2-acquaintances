@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерфейс</title>
+    <style>
+        @font-face {
+            font-family: 'GilroyExtraBold';
+            src: url('fonts/Gilroy-ExtraBod.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        :root {
+            --overlay-height: 81%;
+            --overlay-top: 0%;
+        }
+
+        body {
+            font-family: 'Gilroy', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 375px;
+            padding: 15px;
+            box-sizing: border-box;
+            background-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -20px;
+        }
+
+        .logo-top {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text, .logo-subtext {
+            font-family: 'GilroyExtraBold', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            white-space: pre-wrap;
+            margin: 0;
+        }
+
+        .logo-text {
+            display: inline-block;
+            margin-left: -27px; /* Сдвигаем текст "БОЛЬШЕ," в лого влево */
+        }
+
+        .logo-subtext {
+            margin-top: -3px; /* Поднимаем текст "ЧЕМ ВСТРЕЧА" вверх немного */
+        }
+
+        .image-container {
+            display: flex;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .image {
+            width: 75%;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .color-overlay {
+            width: 77px;
+            height: var(--overlay-height);
+            background-color: #E73A98;
+            position: absolute;
+            top: var(--overlay-top);
+            right: -3px;
+            border-radius: 10px;
+        }
+
+        .text-content {
+            padding: 8px;
+            background-color: #000;
+            color: white;
+            text-align: left;
+            border-radius: 10px;
+            margin-bottom: 0;
+        }
+
+        h1 {
+            font-family: 'GilroyExtraBold', sans-serif;
+            font-size: 24px;
+            margin: 0;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        h1:first-child {
+            margin-left: 0px; /* Сдвигаем текст "БОЛЬШЕ," левее */
+        }
+
+        .sub-header {
+            margin-top: -10px;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 15px 0;
+            background-color: #9FEE00;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-family: 'GilroyExtraBold', sans-serif;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 5px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .register-btn:hover {
+            opacity: 0.9;
+        }
+
+        .small-circle {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: absolute;
+            top: 92%;
+            left: 90%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .small-circle img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-top">
+            <div class="logo-image">
+                <img src="logo/image.jpg" alt="Логотип">
+            </div>
+            <div>
+                <p class="logo-text">БОЛЬШЕ,</p>
+                <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p> <!-- Поднято немного выше -->
+            </div>
+        </div>
+        <div class="image-container">
+            <img class="image" src="photo/image.jpg" alt="Каток">
+            <div class="color-overlay"></div>
+            <div class="small-circle">
+                <img src="logo/image.jpg" alt="Картинка в круге">
+            </div>
+        </div>
+        <div class="text-content">
+            <h1>БОЛЬШЕ,</h1>
+            <h1 class="sub-header">ЧЕМ ВСТРЕЧА</h1>
+            <p>Привет! Ищешь с кем пойти на каток? Давай знакомиться!</p>
+        </div>
+        <a id="register-button" class="register-btn">РЕГИСТРАЦИЯ</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+        const username = urlParams.get('username');
+
+        if (userId && username) {
+            fetch(`getUserData.php?user_id=${userId}&username=${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const { name, about, gender, birthdate } = data;
+                        const choiceUrl = `https://123-231-21312-3213123-231.ru/choice.html?name=${encodeURIComponent(name)}&about=${encodeURIComponent(about)}&gender=${encodeURIComponent(gender)}&birthdate=${encodeURIComponent(birthdate)}&user_id=${userId}&username=${username}`;
+                        window.location.href = choiceUrl;
+                    }
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+        document.getElementById('register-button').onclick = function () {
+            const registrationUrl = `register.html?user_id=${userId}&username=${username}`;
+            window.location.href = registrationUrl;
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Это мэтч!</title>
+    <style>
+        @font-face {
+            font-family: 'T2HalvarBreitExtraBold';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'T2RooftopRegular';
+            src: url('fonts/T2_Rooftop-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'T2RooftopRegular', sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .logo-image {
+            width: 40px; /* Обновлено для соответствия */
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+            margin-top: 4px; /* Обновлено для соответствия */
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-text {
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 0;
+            margin-top: 4px; /* Обновлено для соответствия */
+        }
+
+        .logo-subtext {
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 2px 0 0;
+        }
+
+        .match-container {
+            width: 320px;
+            background-color: #ff1493;
+            border-radius: 15px;
+            text-align: left;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .match-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .match-images img {
+            width: 300px;
+            height: 150px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin: 5px 0;
+        }
+
+        .snow-image {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            top: calc(50% - 30px);
+            z-index: 1;
+        }
+
+        .match-text {
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+            font-size: 24px;
+            margin-top: -20px;
+            margin-bottom: 10px;
+        }
+
+        .match-description {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: block;
+            margin: 5px auto;
+            width: 100%;
+            padding: 12px 0;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+        }
+
+        .button.green {
+            background-color: #a7fc00;
+            color: #000;
+        }
+
+        .button.black {
+            background-color: #000;
+            color: #a7fc00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <div class="logo-image">
+            <img src="logo/image.jpg" alt="Логотип">
+        </div>
+        <div class="logo-text-wrapper">
+            <p class="logo-text">БОЛЬШЕ,</p>
+            <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+        </div>
+    </div>
+
+    <div class="match-container">
+        <div class="match-images">
+            <img src="photo_user/default-profile.jpg" alt="Ваше фото" class="current-user">
+            <img src="photo/love.svg" alt="Снег" class="snow-image" style="width: 60px; height: 60px;">
+            <img src="photo_user/default-profile.jpg" alt="Фото мэтча" class="matched-user">
+        </div>
+
+        <div class="match-text">ЭТО МЭТЧ!</div>
+
+        <div class="match-description">Вы и Артём лайкнули друг друга и можете вместе пойти на каток.</div>
+
+        <a href="#" class="button green">НАПИСАТЬ СООБЩЕНИЕ</a>
+        <a href="#" class="button black">ПРОДОЛЖИТЬ ПОИСК</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentUserId = urlParams.get('current_user_id');
+            const ownerUserId = urlParams.get('owner_user_id');
+            const matchedUsername = urlParams.get('username');
+            const matchName = decodeURIComponent(urlParams.get('name'));
+
+            const currentUserImageElement = document.querySelector('.current-user');
+            const matchedUserImageElement = document.querySelector('.matched-user');
+            const matchDescriptionElement = document.querySelector('.match-description');
+
+            fetch('basa.json')
+                .then(response => response.json())
+                .then(data => {
+                    const currentUser = data[currentUserId];
+                    const matchedUser = data[ownerUserId];
+
+                    currentUserImageElement.src = (currentUser && currentUser.files[0]) || 'photo_user/default-profile.jpg';
+                    matchedUserImageElement.src = (matchedUser && matchedUser.files[0]) || 'photo_user/default-profile.jpg';
+
+                    matchDescriptionElement.textContent = `Вы и ${matchName} лайкнули друг друга и можете вместе пойти на каток.`;
+
+                    document.querySelector('.button.green').href = `https://t.me/${matchedUsername}`;
+
+                    const currentUserName = encodeURIComponent(currentUser.name || 'Имя');
+                    const currentUserUsername = currentUser.username || 'Пользователь';
+                    document.querySelector('.button.black').href = `https://123-231-21312-3213123-231.ru/match.html?user_id=${currentUserId}&username=${currentUserUsername}&name=${currentUserName}&about=${currentUser.about}&gender=${currentUser.gender}&birthdate=${currentUser.birthdate}`;
+                })
+                .catch(error => console.error('Ошибка при загрузке базы данных:', error));
+        });
+    </script>
+
+</body>
+</html>

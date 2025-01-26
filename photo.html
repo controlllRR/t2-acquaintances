@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фотографии профиля</title>
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet">
+    <style>
+        /* Стили оформления */
+        @font-face {
+            font-family: 'RooftopRegular';
+            src: url('fonts/T2_Rooftop-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'HalvarBreit';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'RooftopRegular', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background-color: #ffffff;
+        }
+
+        .container {
+            width: 350px;
+            text-align: left;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: calc(100vh - 40px);
+        }
+
+        .logo-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text,
+        .logo-subtext {
+            font-family: 'HalvarBreit';
+            font-size: 12px;
+            color: #000;
+            margin: 0;
+        }
+
+        .bar {
+            display: flex;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .bar .pink {
+            background-color: #FF3495; /* Розовый цвет */
+            flex: 1;
+            border-radius: 5px;
+            height: 6px;
+            margin: 0 1px;
+        }
+
+        .bar .gray {
+            background-color: #cccccc;
+            flex: 1;
+            border-radius: 5px;
+            height: 6px;
+            margin: 0 1px;
+        }
+
+        h1 {
+            font-family: 'HalvarBreit';
+            font-size: 26px;
+            margin: 0;
+            line-height: 1.2;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .photo-grid {
+            display: flex;
+            width: 100%;
+            justify-content: space-between; /* Выровнять по краям */
+            margin-top: 20px; /* Большее расстояние до заголовка */
+        }
+
+        .photo-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-box {
+            width: 160px;
+            height: 160px;
+            background-color: #E73A98;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            position: relative;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        .photo-box.large {
+            height: 330px;
+            width: 180px;
+        }
+
+        .symbol {
+            font-size: 36px;
+            color: white;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .instruction {
+            font-size: 14px;
+            font-family: 'RooftopRegular';
+            color: gray;
+            text-align: left; /* Выравнивание по левому краю */
+            margin: 10px 0 10px 0;
+        }
+
+        .error-message {
+            font-size: 14px;
+            font-family: 'RooftopRegular';
+            color: red;
+            text-align: center;
+            margin: 5px 0 20px 0;
+            display: none;
+        }
+
+        button {
+            background-color: #cccccc; /* Серый цвет для неактивной кнопки */
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-family: 'HalvarBreit';
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: auto;
+            color: #000000; /* Черный текст на кнопке */
+        }
+
+        button.active {
+            background-color: #9FEE00; /* Зелёный цвет для активной кнопки */
+        }
+
+        button:hover.active {
+            background-color: #88DD00; /* Более тёмный зелёный при наведении */
+        }
+
+        /* Скрыть надпись "Powered by" */
+        .filepond--credits {
+            display: none;
+        }
+
+        /* Скрыть элемент "Drop Image Here" */
+        .filepond--drop-label {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-top">
+            <div class="logo-image">
+                <img src="logo/image.jpg" alt="Логотип">
+            </div>
+            <div>
+                <p class="logo-text">БОЛЬШЕ,</p>
+                <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+            </div>
+        </div>
+        <div class="bar">
+            <div class="gray"></div>
+            <div class="pink"></div>
+            <div class="gray"></div>
+        </div>
+        <h1>ФОТОГРАФИИ</h1>
+        <h1>ПРОФИЛЯ</h1>
+        <div class="photo-grid">
+            <div class="photo-column">
+                <div class="photo-box large" data-index="0">
+                    <div class="symbol">╋</div>
+                </div>
+            </div>
+            <div class="photo-column">
+                <div class="photo-box" data-index="1">
+                    <div class="symbol">╋</div>
+                </div>
+                <div class="photo-box" data-index="2">
+                    <div class="symbol">╋</div>
+                </div>
+            </div>
+        </div>
+        <p class="instruction">Добавьте хотя бы 1 фотографию, чтобы продолжить.</p>
+        <p class="error-message" id="error-message">Пожалуйста, загрузите изображение с минимальными размерами 500x680 пикселей.</p>
+        <button id="continue-btn" disabled>ПРОДОЛЖИТЬ</button>
+    </div>
+
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script>
+        let images = [null, null, null];
+        const continueBtn = document.getElementById('continue-btn');
+        const errorMessageElement = document.getElementById('error-message');
+
+        // Create input for FilePond
+        const inputElement = document.createElement('input');
+        inputElement.type = 'file';
+        inputElement.style.display = 'none';
+        document.body.appendChild(inputElement);
+
+        // FilePond instance
+        const pond = FilePond.create(inputElement);
+
+        // FilePond configuration
+        pond.setOptions({
+            allowMultiple: false,
+            onaddfile: (error, file) => {
+                if (!error) {
+                    handleFileUpload(file);
+                }
+            }
+        });
+
+        document.querySelectorAll('.photo-box').forEach(photoBox => {
+            photoBox.addEventListener('click', function () {
+                const index = this.getAttribute('data-index');
+                pond.element.setAttribute('data-index', index);
+                pond.browse();
+            });
+        });
+
+        function handleFileUpload(file) {
+            const index = pond.element.getAttribute('data-index');
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function () {
+                    if (img.width >= 500 && img.height >= 680) {
+                        const photoBox = document.querySelector(`.photo-box[data-index="${index}"]`);
+                        const symbol = photoBox.querySelector('.symbol');
+                        photoBox.style.backgroundImage = `url(${e.target.result})`;
+                        symbol.style.display = 'none';
+
+                        images[index] = e.target.result; // Store base64 representation
+                        errorMessageElement.style.display = 'none';
+                        checkImages();
+                    } else {
+                        errorMessageElement.style.display = 'block';
+                    }
+                };
+            };
+            reader.readAsDataURL(file.file);
+        }
+
+        function checkImages() {
+            const filledImagesCount = images.filter(img => img !== null).length;
+            continueBtn.disabled = filledImagesCount < 1;
+            continueBtn.classList.toggle('active', filledImagesCount >= 1);
+        }
+
+        async function continueToChoicePage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const formData = {
+                name: urlParams.get('name'),
+                about: urlParams.get('about'),
+                gender: urlParams.get('gender'),
+                birthdate: urlParams.get('birthdate'),
+                user_id: urlParams.get('user_id'),
+                username: urlParams.get('username'),
+                images: images.filter(img => img !== null) // Filter only filled images
+            };
+
+            try {
+                const response = await fetch('upload.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log(result);
+
+                if (result.success) {
+                    const queryString = `user_id=${encodeURIComponent(formData.user_id)}&username=${encodeURIComponent(formData.username)}`;
+                    window.location.replace(`choice.html?${queryString}`);
+                } else {
+                    console.error("Save error:", result.message);
+                }
+            } catch (error) {
+                console.error('Network or server error:', error);
+            }
+        }
+
+        continueBtn.addEventListener('click', continueToChoicePage);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список Уведомлений</title>
+    <style>
+        @font-face {
+            font-family: 'T2HalvarBreitExtraBold';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'T2RooftopRegular';
+            src: url('fonts/T2_Rooftop-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'T2RooftopRegular', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-text, .logo-subtext {
+            font-family: 'T2HalvarBreitExtraBold', sans-serif;
+            font-size: 12px;
+            color: #000;
+            margin: 0;
+        }
+
+        .notification-container {
+            height: calc(100vh - 160px);
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+
+        .notification {
+            max-width: 250px;
+            margin: 20px auto;
+            background-color: #000;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .notification:hover {
+            transform: scale(1.02);
+        }
+
+        .notification img {
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .details {
+            text-align: left;
+            font-family: 'T2RooftopRegular', sans-serif;
+        }
+
+        .username {
+            color: #ff1493;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .sidebar {
+            position: fixed;
+            right: 15px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .icon {
+            width: 32px; 
+            height: 32px;
+            border-radius: 50%;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .slider {
+            width: 8px;
+            background-color: rgba(0, 0, 0, 0.1);
+            height: 300px;
+            border-radius: 50px;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ff1493;
+            border-radius: 4px;
+            transition: transform 0.1s ease-out;
+            cursor: pointer;
+        }
+
+        .no-matches {
+            text-align: center;
+            color: #ff1493;
+            font-size: 16px;
+            margin: 30px auto;
+            font-family: 'T2RooftopRegular', sans-serif;
+        }
+
+        .search-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #ff1493;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .search-button:hover {
+            background-color: #ff007f;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="logo-container">
+        <div class="logo-image">
+            <img src="logo/image.jpg" alt="Логотип">
+        </div>
+        <div class="logo-text-wrapper">
+            <p class="logo-text">БОЛЬШЕ,</p>
+            <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+        </div>
+    </div>
+
+    <div class="notification-container" id="notifications"></div>
+
+    <button class="search-button" id="searchButton">Начать поиск</button>
+
+    <div class="sidebar">
+        <img src="photo/profblack.svg" class="icon" alt="Icon 1">
+        <img src="photo/messagebpinck.svg" class="icon" alt="Icon 2" id="icon2">
+        <img src="photo/messageblack.svgblack2.svg" class="icon" alt="Icon 3" id="icon3">
+        <div class="slider">
+            <div class="scroll-indicator" id="scrollIndicator"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const notificationsContainer = document.getElementById('notifications');
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            const searchButton = document.getElementById('searchButton');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentUserId = urlParams.get('user_id');
+            const username = urlParams.get('username');
+            const name = urlParams.get('name');
+            const about = urlParams.get('about');
+            const gender = urlParams.get('gender');
+            const birthdate = urlParams.get('birthdate');
+
+            document.querySelector('img[alt="Icon 1"]').onclick = () => {
+                const userImage = `${username}/photo.jpg`;
+                const profileUrl = `https://123-231-21312-3213123-231.ru/profil.html?files=${userImage}&name=${name}&username=${username}&about=${about}&gender=${gender}&birthdate=${birthdate}&user_id=${currentUserId}`;
+                window.location.href = profileUrl;
+            };
+
+            document.getElementById('icon2').onclick = () => {
+                const newUrl = `bell.html?user_id=${currentUserId}&username=${encodeURIComponent(username)}&name=${encodeURIComponent(name)}&about=${encodeURIComponent(about)}&gender=${encodeURIComponent(gender)}&birthdate=${encodeURIComponent(birthdate)}`;
+                window.location.href = newUrl;
+            };
+
+            document.getElementById('icon3').onclick = () => {
+                const activity = 'Ищу с кем сходить на каток';
+                const photoFilePath = `photo_user/photo_678c050020222.png`;
+                const newProfileUrl = `https://123-231-21312-3213123-231.ru/main.html?files=${encodeURIComponent(photoFilePath)}&name=${encodeURIComponent(name)}&username=${encodeURIComponent(username)}&about=${encodeURIComponent(about)}&gender=${encodeURIComponent(gender)}&birthdate=${birthdate}&user_id=${currentUserId}&activity=${encodeURIComponent(activity)}`;
+                window.location.href = newProfileUrl;
+            };
+
+            const loadData = () => {
+                Promise.all([
+                    fetch('basa.json').then(response => response.json()),
+                    fetch('matches.json').then(response => response.json())
+                ])
+                .then(([userData, matches]) => {
+                    const displayedUserIds = new Set();
+                    let matchFound = false;
+
+                    notificationsContainer.innerHTML = '';
+
+                    for (const key in matches) {
+                        const match = matches[key];
+                        const otherUserId = match.owner_user_id === currentUserId ? match.current_user_id : match.owner_user_id;
+
+                        if ((match.current_user_id === currentUserId || match.owner_user_id === currentUserId) && match.status === "взаимно") {
+                            if (displayedUserIds.has(otherUserId)) {
+                                continue; 
+                            }
+
+                            displayedUserIds.add(otherUserId);
+                            matchFound = true;
+
+                            const notificationDiv = document.createElement('div');
+                            notificationDiv.className = 'notification';
+
+                            const userImage = 'photo/love.png';
+                            const usernameDisplay = (userData[otherUserId] && userData[otherUserId].username) || "Unknown"; 
+
+                            notificationDiv.innerHTML = `
+                                <img src="${userImage}" alt="Match Image">
+                                <div class="details">
+                                    <div class="username">@${usernameDisplay}</div>
+                                    <div class="status">У вас новый мэтч!</div>
+                                </div>
+                            `;
+                            notificationsContainer.appendChild(notificationDiv);
+                        }
+                    }
+
+                    if (!matchFound) {
+                        const noMatches = document.createElement('div');
+                        noMatches.className = 'no-matches';
+                        noMatches.textContent = 'Пока нет новых мэтчей.';
+                        notificationsContainer.appendChild(noMatches);
+                    }
+                })
+                .catch(error => console.error('Ошибка при загрузке данных:', error));
+            };
+
+            searchButton.onclick = () => {
+                fetch('basa.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const potentialMatches = Object.keys(data).filter(id => id !== currentUserId);
+                        const shuffledMatches = potentialMatches.sort(() => 0.5 - Math.random());
+
+                        const nextMatchId = shuffledMatches[0];
+                        const nextMatch = data[nextMatchId];
+                        const searchUrl = `match.html?user_id=${currentUserId}&match_id=${nextMatchId}&username=${encodeURIComponent(nextMatch.username)}&name=${encodeURIComponent(nextMatch.name)}&about=${encodeURIComponent(nextMatch.about)}&gender=${encodeURIComponent(nextMatch.gender)}&birthdate=${encodeURIComponent(nextMatch.birthdate)}`;
+                        window.location.href = searchUrl;
+                    })
+                    .catch(error => console.error('Ошибка при поиске мэтчей:', error));
+            };
+
+            const updateScrollIndicator = () => {
+                const visibleRatio = notificationsContainer.clientHeight / notificationsContainer.scrollHeight;
+                scrollIndicator.style.height = `${visibleRatio * 100}%`;
+            };
+
+            notificationsContainer.addEventListener('scroll', () => {
+                const scrollHeight = notificationsContainer.scrollHeight - notificationsContainer.clientHeight;
+                const scrollTop = notificationsContainer.scrollTop;
+                const scrollRatio = scrollTop / scrollHeight;
+                scrollIndicator.style.transform = `translateY(${scrollRatio * (300 - scrollIndicator.clientHeight)}px)`;
+            });
+
+            let isDragging = false;
+
+            scrollIndicator.addEventListener('mousedown', () => {
+                isDragging = true;
+                document.body.style.pointerEvents = "none";
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                document.body.style.pointerEvents = "auto";
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = notificationsContainer.getBoundingClientRect();
+                    const maxScrollTop = notificationsContainer.scrollHeight - notificationsContainer.clientHeight;
+                    const sliderHeight = 300 - scrollIndicator.clientHeight;
+                    const newScrollTop = Math.min(maxScrollTop, Math.max(0, (e.clientY - rect.top) * maxScrollTop / sliderHeight));
+                    notificationsContainer.scrollTop = newScrollTop;
+                }
+            });
+
+            window.addEventListener('resize', updateScrollIndicator);
+            loadData();
+            updateScrollIndicator();
+        });
+    </script>
+
+</body>
+</html>

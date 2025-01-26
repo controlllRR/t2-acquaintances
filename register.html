@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание профиля</title>
+    <style>
+        @font-face {
+            font-family: 'HalvarBreit';
+            src: url('fonts/T2HalvarBreit-ExtraBold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'RooftopRegular';
+            src: url('fonts/T2_Rooftop-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'RooftopRegular', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background-color: #ffffff;
+        }
+
+        .container {
+            width: 320px;
+            text-align: left;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: calc(100vh - 40px);
+        }
+
+        .logo-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .logo-text, .logo-subtext {
+            font-family: 'HalvarBreit';
+            font-size: 12px;
+            color: #000;
+            margin: 0;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .bar {
+            display: flex;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .bar div {
+            border-radius: 5px;
+            height: 6px;
+            margin: 0 1px;
+        }
+
+        .bar .purple {
+            background-color: #FF3495; /* Используем правильный розовый цвет */
+            flex: 1;
+        }
+
+        .bar .gray {
+            background-color: #cccccc;
+            flex: 1;
+        }
+
+        h1 {
+            font-family: 'HalvarBreit';
+            font-size: 26px;
+            margin: 0;
+            line-height: 1.2;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        input[type="text"], input[type="date"], button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid #dddddd;
+            font-size: 16px;
+            font-family: 'RooftopRegular';
+        }
+
+        input[type="text"], input[type="date"] {
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus {
+            border: 1px solid #A7FC00; /* Зелёная обводка для активных полей */
+            outline: none;
+        }
+
+        .gender {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .gender label {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dddddd;
+            border-radius: 10px;
+            padding: 10px;
+            flex: 1;
+            margin-right: 5px;
+            transition: border 0.3s;
+            cursor: pointer;
+            font-family: 'RooftopRegular';
+        }
+
+        .gender label::before {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            border: 2px solid #dddddd;
+            border-radius: 50%;
+            background-color: white;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .gender input:checked + label::before {
+            background-color: #FF3495; /* Розовый цвет для выбранной точки */
+            border-color: #FF3495; /* Розовая обводка для активной точки */
+        }
+
+        .gender label:hover, .gender input:focus + label::before {
+            border-color: #FF3495; /* Розовая обводка при наведении */
+        }
+
+        .gender label:last-child {
+            margin-right: 0;
+        }
+
+        .gender input {
+            display: none;
+        }
+
+        button {
+            background-color: #9FEE00;
+            border: none;
+            color: #000000; /* Черный текст на кнопке */
+            cursor: pointer;
+            margin-top: auto;
+            font-family: 'HalvarBreit';
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .max-chars {
+            color: rgba(153, 153, 153, 0.7);
+            font-size: 15px;
+            margin-top: -5px;
+            margin-left: 6px;
+            font-family: 'RooftopRegular';
+        }
+
+        .gender-text {
+            color: #000;
+            font-size: 15px;
+            margin-top: 5px;
+            margin-left: 0px;
+            font-family: 'RooftopRegular';
+        }
+
+        .date-label {
+            font-size: 15px;
+            color: #000;
+            margin-top: 15px;
+            font-family: 'RooftopRegular';
+        }
+
+        .error {
+            border: 1px solid red;
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0); }
+            25% { transform: translate(-2px, 0); }
+            50% { transform: translate(2px, 0); }
+            75% { transform: translate(-2px, 0); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-top">
+            <div class="logo-image">
+                <img src="logo/image.jpg" alt="Логотип">
+            </div>
+            <div>
+                <p class="logo-text">БОЛЬШЕ,</p>
+                <p class="logo-subtext">ЧЕМ ВСТРЕЧА</p>
+            </div>
+        </div>
+        <div class="bar">
+            <div class="purple"></div>
+            <div class="gray"></div>
+            <div class="gray"></div>
+        </div>
+        <div class="profile-title">
+            <h1>СОЗДАНИЕ</h1>
+            <h1>ПРОФИЛЯ</h1>
+        </div>
+        <input type="text" id="name" placeholder="Имя" maxlength="20">
+        <input type="text" id="about" placeholder="О себе" style="margin-top: 5px;" maxlength="120">
+        <p class="max-chars">Макс. 120 символов</p>
+        <p class="gender-text">Пол</p>
+        <div class="gender" style="margin-top: -5px;">
+            <input type="radio" name="gender" id="male" value="Мужчина">
+            <label for="male">Парень</label>
+            <input type="radio" name="gender" id="female" value="Женщина">
+            <label for="female">Девушка</label>
+        </div>
+        <p class="date-label">Дата рождения</p>
+        <input type="date" id="birthdate" placeholder="дд.мм.гггг" style="margin-top: -5px;">
+        <button id="continue-button">ПРОДОЛЖИТЬ</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+        const username = urlParams.get('username');
+
+        const aboutInput = document.getElementById("about");
+        const nameInput = document.getElementById("name");
+        const birthdateInput = document.getElementById("birthdate");
+        const maleInput = document.getElementById("male");
+        const femaleInput = document.getElementById("female");
+
+        aboutInput.addEventListener("input", function() {
+            const value = this.value;
+            if (value.length > 120) {
+                this.value = value.substring(0, 120);
+            }
+            if (this.value.length === 120) {
+                this.classList.add("error", "shake");
+            } else {
+                this.classList.remove("error", "shake");
+            }
+        });
+
+        aboutInput.addEventListener("paste", function(e) {
+            const clipboardData = e.clipboardData || window.clipboardData;
+            const pastedData = clipboardData.getData('text');
+            if (this.value.length + pastedData.length > 120) {
+                e.preventDefault();
+                this.classList.add("error", "shake");
+            } else {
+                this.classList.remove("error", "shake");
+            }
+        });
+
+        document.getElementById("continue-button").addEventListener("click", function() {
+            let valid = true;
+
+            if (!nameInput.value.trim()) {
+                nameInput.classList.add("shake");
+                valid = false;
+            } else {
+                nameInput.classList.remove("shake");
+            }
+
+            if (!aboutInput.value.trim()) {
+                aboutInput.classList.add("shake");
+                valid = false;
+            } else {
+                aboutInput.classList.remove("shake");
+            }
+
+            if (!maleInput.checked && !femaleInput.checked) {
+                maleInput.parentElement.classList.add("shake");
+                femaleInput.parentElement.classList.add("shake");
+                valid = false;
+            } else {
+                maleInput.parentElement.classList.remove("shake");
+                femaleInput.parentElement.classList.remove("shake");
+            }
+
+            if (!birthdateInput.value) {
+                birthdateInput.classList.add("shake");
+                valid = false;
+            } else {
+                birthdateInput.classList.remove("shake");
+            }
+
+            if (valid) {
+                const gender = maleInput.checked ? maleInput.value : femaleInput.value;
+                const query = `name=${encodeURIComponent(nameInput.value)}&about=${encodeURIComponent(aboutInput.value)}&gender=${gender}&birthdate=${birthdateInput.value}&user_id=${userId}&username=${username}`;
+                
+                console.log(`Перенаправление на: photo.html?${query}`);
+                window.location.href = `photo.html?${query}`;
+            } else {
+                document.querySelector('.container').classList.add('shake');
+                setTimeout(() => {
+                    document.querySelector('.container').classList.remove('shake');
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
